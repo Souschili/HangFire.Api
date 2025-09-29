@@ -41,17 +41,33 @@ namespace HangFire.Api
                     x => x.UseNpgsqlConnection(builder.Configuration.GetConnectionString("Docker")),
                     new PostgreSqlStorageOptions
                     {
-                        SchemaName = "hangfire",                       //  ќтдельна€ схема дл€ всех таблиц Hangfire (чтобы не смешивать с бизнес-таблицами)
-                        QueuePollInterval = TimeSpan.FromSeconds(5),   //»нтервал проверки очереди на новые джобы (воркерами)
-                        InvisibilityTimeout = TimeSpan.FromMinutes(30), //  ¬рем€, в течение которого джоба считаетс€ "зан€той" воркером
-                        PrepareSchemaIfNecessary = true               //  јвтоматически создаЄт таблицы Hangfire, если их нет
-                                                                      // ѕараметр DisableGlobalLocks больше не нужен Ч оптимизаци€ включена по умолчанию
+                        SchemaName = "hangfire",                          // string Ч схема дл€ всех таблиц Hangfire
+                        QueuePollInterval = TimeSpan.FromSeconds(15),     // TimeSpan Ч интервал проверки очереди на новые задачи
+                        InvisibilityTimeout = TimeSpan.FromMinutes(30),  // TimeSpan Ч сколько времени задача считаетс€ "зан€той" воркером
+                        //DistributedLockTimeout = TimeSpan.FromMinutes(1),// TimeSpan Ч таймаут распределЄнной блокировки задачи
+                        PrepareSchemaIfNecessary = true,                 // bool Ч авто-создание таблиц, если их нет
+                        //JobExpirationCheckInterval = TimeSpan.FromHours(1), // TimeSpan Ч интервал проверки устаревших задач
+                        //CountersAggregateInterval = TimeSpan.FromMinutes(5), // TimeSpan Ч интервал агрегации счЄтчиков дл€ Dashboard
+                        //AllowUnsafeValues = true,                        // bool Ч разрешить небезопасные значени€ (например, большие строки)
+                        //DeleteExpiredBatchSize = 10,                     // int Ч количество джобов, удал€емых за один проход
+                        //EnableLongPolling = true,                        // bool Ч использовать long polling дл€ ускорени€ обработки задач
+                        //EnableTransactionScopeEnlistment = true,        // bool Ч включить автоматическое участие в TransactionScope
+                        //TransactionSynchronisationTimeout = TimeSpan.FromMinutes(5), // TimeSpan Ч таймаут дл€ TransactionScope
+                        //UseNativeDatabaseTransactions = true,           // bool Ч использовать нативные транзакции PostgreSQL
+                        //UseSlidingInvisibilityTimeout = true             // bool Ч использовать "скольз€щий" InvisibilityTimeout (обновление таймаута по мере работы джобы)
+
                     }));
+
 
             // ----------------------------
             // «апуск Hangfire сервера (воркеры)
             // ----------------------------
-            builder.Services.AddHangfireServer();
+            builder.Services.AddHangfireServer(opt=> new BackgroundJobServerOptions
+            {
+                // именованные очереди ,приоритет с лева направо
+                // как только джобы в первом закончатс€ начнут выполн€тс€ джобы во втором ,а потом в третьем
+                Queues = ["High", "Medium", "Low"]
+            });
 
             var app = builder.Build();
 
