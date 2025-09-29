@@ -67,6 +67,14 @@ namespace HangFire.Api
                 // именованные очереди ,приоритет с лева направо
                 // как только джобы в первом закончатся начнут выполнятся джобы во втором ,а потом в третьем
                 Queues = ["High", "Medium", "Low"]
+                
+            });
+
+            GlobalJobFilters.Filters.Add(new AutomaticRetryAttribute
+            {
+                Attempts = 3,              // сколько раз пытаться повторно выполнить упавшую джобу
+                DelaysInSeconds = new[] { 10, 30, 60 }, // интервалы между попытками
+                LogEvents = true            // логировать попытки
             });
 
             var app = builder.Build();

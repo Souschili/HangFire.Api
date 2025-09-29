@@ -1,4 +1,5 @@
-﻿using HangFire.Api.Context;
+﻿using Hangfire;
+using HangFire.Api.Context;
 using HangFire.Api.Entity;
 using HangFire.Api.Services.Contract;
 
@@ -13,6 +14,8 @@ namespace HangFire.Api.Services
             _context = context;
         }
 
+        // будет пытаться выполниться 5 раз с указанными задержками между попытками.
+        [AutomaticRetry(Attempts = 5, DelaysInSeconds = new[] { 5, 10, 20 })]
         public async Task GenerateRegularReport()
         {
             var job = new DailyReport
