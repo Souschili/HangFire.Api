@@ -1,7 +1,6 @@
 ﻿using HangFire.Api.Context;
 using HangFire.Api.Entity;
 using HangFire.Api.Services.Contract;
-using Microsoft.EntityFrameworkCore.Design.Internal;
 
 namespace HangFire.Api.Services
 {

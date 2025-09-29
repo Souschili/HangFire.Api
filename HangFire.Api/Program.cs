@@ -14,34 +14,50 @@ namespace HangFire.Api
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
+            // ----------------------------
+            // Настройка DbContext для работы с Postgres
+            // ----------------------------
             builder.Services.AddDbContext<AppDbContext>(x =>
-            x.UseNpgsql(builder.Configuration.GetConnectionString("Docker")));
+                x.UseNpgsql(builder.Configuration.GetConnectionString("Docker")));
 
+            // ----------------------------
+            // Регистрация сервиса, который будет использоваться в джобах
+            // ----------------------------
             builder.Services.AddScoped<IReportService, ReportService>();
 
+            // ----------------------------
+            // Добавление контроллеров и Swagger
+            // ----------------------------
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddHangfire(cfg=> 
-            cfg.UsePostgreSqlStorage(x=> x.UseNpgsqlConnection(builder.Configuration.GetConnectionString("Docker")),new PostgreSqlStorageOptions
-            {
-                SchemaName = "hangfire",                       //  Отдельная схема в Postgres для всех таблиц Hangfire
-                QueuePollInterval = TimeSpan.FromSeconds(5),   //  Как часто воркеры проверяют очередь на новые джобы
-                InvisibilityTimeout = TimeSpan.FromMinutes(30), // Время, в течение которого джоба считается "в работе" (если воркер упал, джоба станет видимой)
-                PrepareSchemaIfNecessary = true                 //  Автоматически создаёт таблицы Hangfire, если их нет
+            // ----------------------------
+            // Настройка Hangfire
+            // ----------------------------
+            builder.Services.AddHangfire(cfg =>
+                cfg.UsePostgreSqlStorage(
+                    // Передаем подключение к базе Postgres
+                    x => x.UseNpgsqlConnection(builder.Configuration.GetConnectionString("Docker")),
+                    new PostgreSqlStorageOptions
+                    {
+                        SchemaName = "hangfire",                       //  Отдельная схема для всех таблиц Hangfire (чтобы не смешивать с бизнес-таблицами)
+                        QueuePollInterval = TimeSpan.FromSeconds(5),   //Интервал проверки очереди на новые джобы (воркерами)
+                        InvisibilityTimeout = TimeSpan.FromMinutes(30), //  Время, в течение которого джоба считается "занятой" воркером
+                        PrepareSchemaIfNecessary = true               //  Автоматически создаёт таблицы Hangfire, если их нет
+                                                                      // Параметр DisableGlobalLocks больше не нужен — оптимизация включена по умолчанию
+                    }));
 
-            }));
-
+            // ----------------------------
+            // Запуск Hangfire сервера (воркеры)
+            // ----------------------------
             builder.Services.AddHangfireServer();
-
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            // ----------------------------
+            // Swagger для разработки
+            // ----------------------------
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -49,16 +65,26 @@ namespace HangFire.Api
             }
 
             app.UseHttpsRedirection();
-
             app.UseAuthorization();
 
-            
+            // ----------------------------
+            // Hangfire Dashboard
+            // Доступно по /hangfire, для мониторинга джоб, воркеров и истории выполнения
+            // ----------------------------
             app.UseHangfireDashboard();
+
+            // ----------------------------
+            // Регистрация регулярных джоб
+            // ----------------------------
             RecurringJobsConfigurator.RegisterJob();
 
+            // ----------------------------
+            // Контроллеры
+            // ----------------------------
             app.MapControllers();
 
             app.Run();
         }
     }
+
 }

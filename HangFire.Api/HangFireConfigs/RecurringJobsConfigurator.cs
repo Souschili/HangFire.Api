@@ -8,10 +8,13 @@ namespace HangFire.Api.HangFireConfigs
 
         public static void RegisterJob()
         {
-           
-            RecurringJob.AddOrUpdate<IReportService>("RegularReport",
-                x=> x.GenerateRegularReport(),
-                "*/10 * * * * *"); // cron-синтаксис 10 сек
+            //------------------------------
+            // регистрации джоба который вызывает метод сервиса каждые 10 сек
+            //------------------------------
+            RecurringJob.AddOrUpdate<IReportService>(
+                "RegularReport",
+                x => x.GenerateRegularReport(),
+                "*/10 * * * * *");
         }
 
     }
