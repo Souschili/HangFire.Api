@@ -36,7 +36,9 @@ namespace HangFire.Api
             // Настройка Hangfire
             // ----------------------------
             builder.Services.AddHangfire(cfg =>
-                cfg.UsePostgreSqlStorage(
+                cfg.UseSimpleAssemblyNameTypeSerializer() // Сериализатор с упрощённым именем сборки
+                .UseRecommendedSerializerSettings()       // Рекомендуемые настройки сериализации
+                .UsePostgreSqlStorage(
                     // Передаем подключение к базе Postgres
                     x => x.UseNpgsqlConnection(builder.Configuration.GetConnectionString("Docker")),
                     new PostgreSqlStorageOptions
