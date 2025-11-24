@@ -24,14 +24,22 @@ namespace HangFire.Api.Services
                 Data = $"Report was generated at {DateTime.Now}",
                 Status = "Done"
             };
+            await Task.Delay(15000);
             await _context.AddAsync(job);
             await _context.SaveChangesAsync();
         }
 
-        
-        void IReportService.GenerateOnceReport()
+        [AutomaticRetry(Attempts = 5, DelaysInSeconds = new[] { 5, 10, 20 })]
+        public async Task GenerateOnceReportAsync()
         {
-            throw new NotImplementedException();
+            var job = new MonthReport
+            {
+                GeneratedAt = DateTime.UtcNow,
+                Data = $"Report was generated at {DateTime.Now}",
+                Status = "Done"
+            };
+            await _context.AddAsync(job);
+            await _context.SaveChangesAsync();
         }
     }
 }

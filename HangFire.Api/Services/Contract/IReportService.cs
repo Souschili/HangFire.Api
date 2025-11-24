@@ -3,6 +3,6 @@
     public interface IReportService
     {
         Task GenerateRegularReport();
-        void GenerateOnceReport();
+        Task GenerateOnceReportAsync();
     }
 }
