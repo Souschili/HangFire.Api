@@ -11,10 +11,13 @@ namespace HangFire.Api.HangFireConfigs
             //------------------------------
             // регистрации джоба который вызывает метод сервиса каждые 10 сек
             //------------------------------
+
             RecurringJob.AddOrUpdate<IReportService>(
-                "RegularReport",
-                x => x.GenerateRegularReport(),
-                "*/10 * * * * *");
+              recurringJobId:"RegularJob",
+              methodCall:x=> x.GenerateRegularReport(),
+              cronExpression: "*/10 * * * * *",
+              queue:"Medium" 
+            );
         }
 
     }
