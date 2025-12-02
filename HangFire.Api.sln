@@ -1,9 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35919.96 d17.13
+VisualStudioVersion = 17.13.35919.96
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HangFire.Api", "HangFire.Api\HangFire.Api.csproj", "{D7C26050-FB53-4F22-B37B-78A25E420C77}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SharedProto", "SharedProto", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedProtoSource", "SharedProtoSource\SharedProtoSource.csproj", "{0F34C1C2-0A1D-4740-A47C-0F784CE27075}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrpcServer.Api", "GrpcServer.Api\GrpcServer.Api.csproj", "{11F95087-7BDF-4ACA-BD64-48E2FC86125F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +21,20 @@ Global
 		{D7C26050-FB53-4F22-B37B-78A25E420C77}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D7C26050-FB53-4F22-B37B-78A25E420C77}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D7C26050-FB53-4F22-B37B-78A25E420C77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F34C1C2-0A1D-4740-A47C-0F784CE27075}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F34C1C2-0A1D-4740-A47C-0F784CE27075}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F34C1C2-0A1D-4740-A47C-0F784CE27075}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F34C1C2-0A1D-4740-A47C-0F784CE27075}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11F95087-7BDF-4ACA-BD64-48E2FC86125F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11F95087-7BDF-4ACA-BD64-48E2FC86125F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11F95087-7BDF-4ACA-BD64-48E2FC86125F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11F95087-7BDF-4ACA-BD64-48E2FC86125F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0F34C1C2-0A1D-4740-A47C-0F784CE27075} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7A0A8631-9E79-4ECC-AF77-13232F89C705}

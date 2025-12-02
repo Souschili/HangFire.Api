@@ -1,0 +1,15 @@
+﻿syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+option csharp_namespace = "SharedHangFire";
+
+package hangFire;   
+
+message ConnectionStringResponse{
+	string connectionString=1;
+}
+
+service HangFireServices{
+	rpc GetConnectionString(google.protobuf.Empty) returns(ConnectionStringResponse);
+}

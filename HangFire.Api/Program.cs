@@ -5,6 +5,10 @@ using HangFire.Api.HangFireConfigs;
 using HangFire.Api.Services;
 using HangFire.Api.Services.Contract;
 using Microsoft.EntityFrameworkCore;
+using SharedHangFire;
+using Grpc.Net.Client;
+using HangFire.Api.Services.ProtoService;
+using Google.Protobuf.WellKnownTypes;
 
 namespace HangFire.Api
 {
@@ -13,6 +17,23 @@ namespace HangFire.Api
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+
+            builder.Services.AddSingleton<IHangfireGrpcService, HangfireGrpcService>();
+            builder.Services.AddSingleton<HangFireServices.HangFireServicesClient>(cfg =>
+            {
+                var channel = GrpcChannel.ForAddress("https://localhost:5001");
+                return new HangFireServices.HangFireServicesClient(channel);
+            });
+
+            // Создаём канал к серверу
+            using var channel = GrpcChannel.ForAddress("https://localhost:7250");
+
+            // Создаём gRPC клиент
+            var client = new HangFireServices.HangFireServicesClient(channel);
+
+            // Вызов RPC сразу при старте
+            var response =  client.GetConnectionStringAsync(new Empty()).GetAwaiter().GetResult();
 
             // ----------------------------
             // Настройка DbContext для работы с Postgres
